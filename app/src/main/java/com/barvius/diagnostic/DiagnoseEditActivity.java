@@ -1,14 +1,17 @@
 package com.barvius.diagnostic;
 
+import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.barvius.diagnostic.entity.Diagnose;
 import com.barvius.diagnostic.entity.Symptom;
@@ -57,23 +60,29 @@ public class DiagnoseEditActivity extends AppCompatActivity {
 
             tmp.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if(isChecked){
-                    double currentProgress;
-                    final AlertDialog.Builder popDialog = new AlertDialog.Builder(DiagnoseEditActivity.this);
-                    popDialog.setCancelable(false);
-                    popDialog.setPositiveButton("OK",
-                            (dialog, which) -> dialog.dismiss());
-                    final SeekBar seek = new SeekBar(new ContextThemeWrapper(DiagnoseEditActivity.this, R.style.uiSeekBar));
-                    seek.setMax(100);
-                    seek.setProgress(50);
-                    final AlertDialog handle = popDialog.create();
-                    handle.setTitle("Уровень доверия (50%)");
-                    symptomList.get(buttonView.getId()).setConfidence(0.5);
-                    handle.setView(seek);
-                    seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//                    builder.setTitle(symptomList.get(buttonView.getId()).getName());
+                    final View customLayout = getLayoutInflater().inflate(R.layout.dialog_layout_md, null);
+                    builder.setView(customLayout);
+
+                    builder.setPositiveButton("OK", (dialog, which) -> {
+                        // send data from the AlertDialog to the Activity
+//                            EditText editText = customLayout.findViewById(R.id.editText);
+//                            sendDialogDataToActivity(editText.getText().toString());
+                    });
+
+                    TextView mnd = (TextView) customLayout.findViewById(R.id.dialog_md_mnd);
+                    SeekBar sbmnd = (SeekBar) customLayout.findViewById(R.id.dialog_md_mndp);
+
+                    TextView md = (TextView) customLayout.findViewById(R.id.dialog_md_md);
+                    SeekBar sbmd = (SeekBar) customLayout.findViewById(R.id.dialog_md_mdp);
+
+                    sbmnd.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-                            handle.setTitle("Уровень доверия ("+progress+"%)");
-                            symptomList.get(buttonView.getId()).setConfidence((double)progress/100);
+//                            handle.setTitle("Уровень доверия ("+progress+"%)");
+//                            symptomList.get(buttonView.getId()).setConfidence((double)progress/100);
+                            mnd.setText(Double.toString(((double)progress/100)*symptomList.get(buttonView.getId()).getConfidence()));
                         }
 
                         @Override
@@ -84,7 +93,58 @@ public class DiagnoseEditActivity extends AppCompatActivity {
                         public void onStopTrackingTouch(SeekBar seekBar) {
                         }
                     });
-                    handle.show();
+
+                    sbmd.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
+//                            handle.setTitle("Уровень доверия ("+progress+"%)");
+                            symptomList.get(buttonView.getId()).setConfidence((double)progress/100);
+                            md.setText(Double.toString((double)progress/100));
+                            sbmnd.setProgress(sbmnd.getProgress()+1);
+                            sbmnd.setProgress(sbmnd.getProgress()-1);
+
+                            //                            sbmnd.dra
+//                            sbmnd.refreshDrawableState();
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar arg0) {
+                        }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                        }
+                    });
+                    // create and show the alert dialog
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+//                    final AlertDialog.Builder popDialog = new AlertDialog.Builder(DiagnoseEditActivity.this);
+//                    popDialog.setCancelable(false);
+//                    popDialog.setPositiveButton("OK",
+//                            (dialog, which) -> dialog.dismiss());
+//                    final SeekBar seek = new SeekBar(new ContextThemeWrapper(DiagnoseEditActivity.this, R.style.uiSeekBar));
+//                    seek.setMax(100);
+//                    seek.setProgress(50);
+//                    final AlertDialog handle = popDialog.create();
+//                    handle.setTitle("Уровень доверия (50%)");
+//                    symptomList.get(buttonView.getId()).setConfidence(0.5);
+//                    handle.setView(seek);
+//                    seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//                        @Override
+//                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
+//                            handle.setTitle("Уровень доверия ("+progress+"%)");
+//                            symptomList.get(buttonView.getId()).setConfidence((double)progress/100);
+//                        }
+//
+//                        @Override
+//                        public void onStartTrackingTouch(SeekBar arg0) {
+//                        }
+//
+//                        @Override
+//                        public void onStopTrackingTouch(SeekBar seekBar) {
+//                        }
+//                    });
+//                    handle.show();
                 }
 
                 currentDiagnose.clearSymptoms();
