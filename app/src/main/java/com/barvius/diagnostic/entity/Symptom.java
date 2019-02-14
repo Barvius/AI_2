@@ -3,7 +3,8 @@ package com.barvius.diagnostic.entity;
 public class Symptom {
     private long id;
     private String name;
-    private double confidence;
+    private double md;
+    private double mnd;
 
     public long getId() {
         return id;
@@ -32,10 +33,11 @@ public class Symptom {
         this.name = name;
     }
 
-    public Symptom(long id, String name, double confidence) {
+    public Symptom(long id, String name, double md, double mnd) {
         this.id = id;
         this.name = name;
-        this.confidence = confidence;
+        this.md = md;
+        this.mnd = mnd;
     }
 
     @Override
@@ -43,11 +45,19 @@ public class Symptom {
         return name;
     }
 
-    public double getConfidence() {
-        return confidence;
+    public double getMd() {
+        return md;
     }
 
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
+    public void setMd(double md) {
+        this.md = md;
+    }
+
+    public double getMnd() {
+        return mnd;
+    }
+
+    public void setMnd(double mnd) {
+        this.mnd = mnd;
     }
 }

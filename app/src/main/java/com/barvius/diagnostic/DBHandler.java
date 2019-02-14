@@ -39,7 +39,8 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS symptom_diagnose (" +
                 "diagnose INTEGER NOT NULL," +
                 "symptom INTEGER NOT NULL," +
-                "confidence DOUBLE NOT NULL," +
+                "md DOUBLE NOT NULL," +
+                "mnd DOUBLE NOT NULL," +
                 "FOREIGN KEY (diagnose) REFERENCES diagnose(id) ON DELETE CASCADE,"+
                 "FOREIGN KEY (symptom) REFERENCES symptom(id) ON DELETE CASCADE,"+
                 "UNIQUE(diagnose,symptom)"+
@@ -50,7 +51,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 //        db.execSQL("DROP TABLE IF EXISTS symptom");
 //        db.execSQL("DROP TABLE IF EXISTS diagnose");
-//        db.execSQL("DROP TABLE IF EXISTS symptom_diagnose");
+        db.execSQL("DROP TABLE IF EXISTS symptom_diagnose");
         onCreate(db);
     }
 
@@ -86,7 +87,8 @@ public class DBHandler extends SQLiteOpenHelper {
             values = new ContentValues();
             values.put("diagnose", diagnose.getId());
             values.put("symptom", i.getId());
-            values.put("confidence", i.getConfidence());
+            values.put("md", i.getMd());
+            values.put("mnd", i.getMnd());
             db.insert("symptom_diagnose", null, values);
         }
         db.close();
@@ -129,7 +131,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public Diagnose selectDiagnoseById(long id){
         Diagnose tmpDiagnose = null;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT symptom_diagnose.diagnose, diagnose.name, symptom_diagnose.symptom, symptom.name, symptom_diagnose.confidence " +
+        Cursor cursor = db.rawQuery("SELECT symptom_diagnose.diagnose, diagnose.name, symptom_diagnose.symptom, symptom.name, symptom_diagnose.md, symptom_diagnose.mnd " +
                 "FROM symptom_diagnose, symptom, diagnose WHERE symptom_diagnose.diagnose = diagnose.id AND symptom_diagnose.symptom = symptom.id " +
                 "AND symptom_diagnose.diagnose =" + id + " "+
                 "GROUP BY symptom_diagnose.symptom", null);
@@ -139,7 +141,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     tmpDiagnose = new Diagnose(cursor.getLong(0),cursor.getString(1));
                 }
                 if(tmpDiagnose != null){
-                    tmpDiagnose.addSymptom(new Symptom(cursor.getLong(2),cursor.getString(3),cursor.getDouble(4)));
+                    tmpDiagnose.addSymptom(new Symptom(cursor.getLong(2),cursor.getString(3),cursor.getDouble(4),cursor.getDouble(5)));
                 }
             } while (cursor.moveToNext());
         }
@@ -186,7 +188,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public static void init(Context context){
-        instance = new DBHandler(context,"diagnostic",null,2);
+        instance = new DBHandler(context,"diagnostic",null,3);
     }
 
     public static String HASH(String text) {
