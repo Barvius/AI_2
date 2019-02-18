@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -97,6 +98,10 @@ public class DiagnoseListActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, this.diagnoseList);
         list.setAdapter(adapter);
         registerForContextMenu(list);
+
+        for (Diagnose i : DBHandler.getInstance().selectDiagnoses()) {
+            Log.d("MyLog", " = "+CalculateKU.calculate(i));
+        }
     }
 
     protected void addNew(){

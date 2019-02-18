@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -75,14 +76,14 @@ public class DiagnoseEditActivity extends AppCompatActivity {
                     }
                     md.setText(Double.toString(symptomList.get(buttonView.getId()).getMd()));
                     mnd.setText(Double.toString(symptomList.get(buttonView.getId()).getMnd()));
-                    sbmnd.setProgress((int) (symptomList.get(buttonView.getId()).getMnd() * 100));
+                    sbmnd.setProgress((int) (symptomList.get(buttonView.getId()).getMnd() * 200));
                     sbmd.setProgress((int) (symptomList.get(buttonView.getId()).getMd() * 100));
 
                     sbmnd.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
                             symptomList.get(buttonView.getId()).setMnd(((double)progress/100)*symptomList.get(buttonView.getId()).getMd());
-                            mnd.setText(Double.toString(((double)progress/100)*symptomList.get(buttonView.getId()).getMd()));
+                            mnd.setText(Double.toString(symptomList.get(buttonView.getId()).getMnd()));
                         }
 
                         @Override
@@ -96,7 +97,7 @@ public class DiagnoseEditActivity extends AppCompatActivity {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
                             symptomList.get(buttonView.getId()).setMd((double)progress/100);
-                            md.setText(Double.toString((double)progress/100));
+                            md.setText(Double.toString( symptomList.get(buttonView.getId()).getMd()));
                             sbmnd.setProgress(sbmnd.getProgress()+1);
                             sbmnd.setProgress(sbmnd.getProgress()-1);
                         }
@@ -113,6 +114,7 @@ public class DiagnoseEditActivity extends AppCompatActivity {
 
                 currentDiagnose.clearSymptoms();
                 currentDiagnose.addSymptoms(getSelectedSymptoms(checkBoxList, symptomList));
+
                 button.setEnabled(true);
                 if(CompareDiagnoses.compare(DBHandler.getInstance().selectDiagnoses(),currentDiagnose)){
                     button.setEnabled(false);

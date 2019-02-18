@@ -50,7 +50,7 @@ public class Symptom {
     }
 
     public void setMd(double md) {
-        this.md = md;
+        this.md = (double) Math.round(md * 100) / 100;
     }
 
     public double getMnd() {
@@ -58,6 +58,6 @@ public class Symptom {
     }
 
     public void setMnd(double mnd) {
-        this.mnd = mnd;
+        this.mnd = (double) Math.round(mnd * 1000) / 1000;
     }
 }
