@@ -11,12 +11,16 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.barvius.diagnostic.entity.Diagnose;
 import com.barvius.diagnostic.entity.Symptom;
 import com.barvius.diagnostic.entity.TestAnswer;
 import com.barvius.diagnostic.ui.StatusBarTools;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class TestActivity extends AppCompatActivity {
     private int current;
@@ -37,7 +41,6 @@ public class TestActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         StatusBarTools.setStatusBarColor(getWindow(),getResources().getColor(R.color.backgroundAppBarDark));
 
-        Log.d("MyTag", "onCreate: " + DBHandler.getInstance().selectDiagnoses().size());
         if(DBHandler.getInstance().selectDiagnoses().size() > 0 && DBHandler.getInstance().selectSymptomNames().size() > 0){
             for (Symptom i: DBHandler.getInstance().selectSymptomNames()) {
                 answersList.add(new TestAnswer(i));
@@ -116,12 +119,19 @@ public class TestActivity extends AppCompatActivity {
                 d.add(i.getSymptom());
             }
         }
-        long id = CompareDiagnoses.compareTestResult(DBHandler.getInstance().selectDiagnoses(),d);
+        TreeMap<Double,String> treeMap = new TreeMap<Double,String>((o1, o2) -> {
+            if (o1 == o2) return 0;
+            if (o1 > o2) return -1;
+            else return 1;
+        });
+        for (Diagnose i: DBHandler.getInstance().selectDiagnoses()) {
+            treeMap.put((double) Math.round(CalculateKU.calculate(CompareDiagnoses.inSet(d,i).getSymptoms()) * 100) / 100,i.getName());
+        }
         String text = "";
-        if (id == -1){
-            text = "В базе отсутствует диагноз соответствующий выбранным симптомам";
-        } else {
-            text = DBHandler.getInstance().selectDiagnoseById(id).getName();
+        for (Map.Entry<Double,String> i : treeMap.entrySet()) {
+            if(i.getKey() > 0.5){
+                text += i.getValue() + " ("+ i.getKey()+")\n";
+            }
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Результат теста")

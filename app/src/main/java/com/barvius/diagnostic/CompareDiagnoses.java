@@ -68,4 +68,16 @@ public class CompareDiagnoses {
         }
         return id;
     }
+
+    public static Diagnose inSet(List<Symptom> selected, Diagnose diagnose){
+        List<Symptom> s = new ArrayList<>();
+        for (Symptom i: diagnose.getSymptoms()) {
+            if(CompareDiagnoses.inSequence(selected,i)){
+                s.add(i);
+            }
+        }
+        diagnose.clearSymptoms();
+        diagnose.addSymptoms(s);
+        return diagnose;
+    }
 }

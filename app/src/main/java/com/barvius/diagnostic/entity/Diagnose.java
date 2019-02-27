@@ -1,5 +1,7 @@
 package com.barvius.diagnostic.entity;
 
+import com.barvius.diagnostic.CalculateKU;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class Diagnose {
 
     @Override
     public String toString() {
-        return name;
+        return name + " KU = " + CalculateKU.calculate(this.getSymptoms());
     }
 
     public boolean symptomAvailable(Symptom symptom){

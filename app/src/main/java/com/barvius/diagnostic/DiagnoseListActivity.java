@@ -92,16 +92,15 @@ public class DiagnoseListActivity extends AppCompatActivity {
     }
 
     protected void loadList(){
-        this.diagnoseList = DBHandler.getInstance().selectDiagnoseNames();
+        this.diagnoseList = DBHandler.getInstance().selectDiagnoses();
+        //names if no print ku
         ListView list = (ListView) findViewById(R.id.diagnose_dynamic_list);
         ArrayAdapter<Diagnose> adapter = new ArrayAdapter<Diagnose>(this,
                 android.R.layout.simple_list_item_1, this.diagnoseList);
         list.setAdapter(adapter);
         registerForContextMenu(list);
 
-        for (Diagnose i : DBHandler.getInstance().selectDiagnoses()) {
-            Log.d("MyLog", " = "+CalculateKU.calculate(i));
-        }
+
     }
 
     protected void addNew(){
